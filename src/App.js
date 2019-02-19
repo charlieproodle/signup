@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
-import LoginForm  from './components/LoginForm';
+import './App.css';
+import { connect } from 'react-redux';
+import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
+
+import LoginForm from './components/LoginScreen';
 import HomeScreen from './components/HomeScreen';
-import { Switch, Route, Redirect, BrowserRouter as Router } from 'react-router-dom';
+import EmptyScreen from './components/EmptyScreen';
+import RegisterForm from './components/RegisterScreen';
+import Navbar from './components/Navbar';
+
+var jwt = require('jsonwebtoken');
+var passwordHash = require('password-hash');
 
 class App extends Component {
+  
+  render() {
 
-  state = {
-    'auth_email': false
-  }
-
-  render(){
-
-    const getCookie = (cname) => {
+    function getCookie(cname) {
       var name = cname + "=";
       var decodedCookie = decodeURIComponent(document.cookie);
       var ca = decodedCookie.split(';');
-      for(var i = 0; i <ca.length; i++) {
+      for(var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) === ' ') {
           c = c.substring(1);
@@ -27,38 +32,55 @@ class App extends Component {
       return "";
     }
 
-    console.log('Cookie Length: ' + getCookie('auth_email').length);
+    
 
-    const submitForm = (formValues) => {
-        console.log('Submitting Form: ', formValues);
-        document.cookie = 'auth_email=' + formValues.email;
-        this.setState({'auth_email': true}); 
+    const onSubmit = (values) => {
+
+      const header = {
+        "alg": "HS256",
+        "typ": "JWT"
+      }
+
+      values.password = passwordHash.generate(values.password);
+      const secret =  'basic-secret-token';
+      const payload = values;
+      const jwtToken = jwt.sign(({exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24), data : payload}), secret, { header : header })
+
+      document.cookie = 'jwt-token=' + jwtToken + 'expires=Thu, 18 Dec 2020 12:00:00 UTC';
+
+      console.log('JWT Token: ' + getCookie('jwt-token'))
+      this.props.history.push('/HomeScreen')
+
     }
 
-    return (
-        <Router>
-            <div>
-              <Switch>
-                <Route exact path='/' render={(props) =>
-                  this.state.auth_email ? <Redirect to="/HomeScreen"/> :
-                    <LoginForm
-                      onSubmit={submitForm}
-                    />
-                }/>
-                <Route path='/HomeScreen' render={(props) =>
-                  document.cookie.indexOf("auth_email=") >= 0 ?
-                    <HomeScreen/>
-                  :
-                    <Redirect to={{ pathname: '/' }}/>
-                }/>
-                <Route render={(props) =>
-                  <Redirect to={{pathname: '/'}}/>
-                }/>
-              </Switch>
-            </div>
-        </Router>
+    const PrivateRoute = ({component: Component, ...rest}) => (
+      <Route
+        {...rest}
+        render={ (props) => 
+          getCookie('jwt-token') ? (<Component {...props}/>) : (<Redirect to='/'/>)
+        }
+      />
     )
+
+    return (
+      <div>
+        <Navbar cookies={getCookie('jwt-token') ? true : false}/>
+        <Switch>
+          <Route exact path='/' render={() => <LoginForm onSubmit={onSubmit}/>}/>
+          <Route path='/Register' render={() => <RegisterForm onSubmit={onSubmit}/>}/>
+          <PrivateRoute path='/HomeScreen' component={HomeScreen}/>
+          <Route render={() => <EmptyScreen error_msg={404}/>}/>
+        </Switch>
+      </div>
+    ); 
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return state;
+}
+
+const mapActionsToProps = {
+}
+
+export default withRouter(connect(mapStateToProps, mapActionsToProps)(App));

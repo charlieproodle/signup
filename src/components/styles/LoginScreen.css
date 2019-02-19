@@ -1,0 +1,24 @@
+.mainContainer {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.loginForm {
+    text-align: left;
+    margin: auto;
+    width: 30%
+}
+
+.loginTitle {
+    text-align: center;
+}
+
+.error {
+    color: red;
+    margin-left: 1%
+}
+
+.link {
+    float: right;
+}
