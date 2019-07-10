@@ -3,6 +3,9 @@ import AppConfig from "../Config/AppConfig";
 
 // ------------ Auxillary Functions ------------ //
 
+const authPrefix = "Bearer";
+var accessToken = localStorage.getItem("access");
+
 const create = (baseURL = AppConfig.APIServer) => {
   const api = apisauce.create({
     baseURL,
@@ -28,11 +31,17 @@ const create = (baseURL = AppConfig.APIServer) => {
     })
   }
 
+  const authApi = () => {
+    api.setHeader("Authorization", `${authPrefix} ${accessToken}`);
+    return api.get("auth/")
+  }
+
   // ------------ Exports ------------ //
 
   return {
     loginApi,
-    signupApi
+    signupApi,
+    authApi
   };
 };
 

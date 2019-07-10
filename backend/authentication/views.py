@@ -36,6 +36,8 @@ class LoginView(views.APIView):
 			username = request.data['username'], 
 			password = request.data['password']
 			)
+		print(request.data)
+		print(user)
 		# If the user exists send back details
 		if user is not None:
 			serializer = UserSerializer(user)
@@ -75,7 +77,15 @@ class RegisterView(views.APIView):
 			return Response({"detail": "User already exists"}, status = status.HTTP_401_UNAUTHORIZED)
 
 
-
-
+class AuthView(views.APIView):
+	def get(self, request):
+		user = request.user
+		serializer = UserSerializer(user)
+		tokens = get_tokens_for_user(user)
+		authResponse = {
+			'user': serializer.data,
+			'tokens': tokens
+		}
+		return Response(authResponse, status = status.HTTP_200_OK)
 
 			

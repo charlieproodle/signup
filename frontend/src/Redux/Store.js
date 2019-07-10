@@ -4,8 +4,13 @@ import createSagaMiddleware from "redux-saga";
 import root from "../Sagas/Watchers";
 import { combineReducers } from "redux";
 import { reducer as formReducer } from "redux-form";
+// import { connectRouter, routerMiddleware } from 'connected-react-router'
+// import { createBrowserHistory } from 'history'
+
+// export const history = createBrowserHistory()
 
 const reducers = combineReducers({
+  // router: connectRouter(history),
   auth: require("./AuthRedux").reducer,
   form: formReducer
 });
@@ -16,7 +21,11 @@ export default function configureStore() {
   const sagaMiddleware = createSagaMiddleware();
   const store = createStore(
     reducers,
-    composeEnhancers(applyMiddleware(thunkMiddleware, sagaMiddleware))
+    composeEnhancers(
+      applyMiddleware(
+        // routerMiddleware(history),
+        thunkMiddleware, 
+        sagaMiddleware))
   );
   sagaMiddleware.run(root);
   return store;

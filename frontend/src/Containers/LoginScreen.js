@@ -7,15 +7,20 @@ import { withStyles } from "@material-ui/styles";
 import styles from "./styles/LoginScreenStyle";
 
 class LoginScreen extends Component {
+
   componentDidUpdate() {
-    const { isLoggedIn, history } = this.props;
-    if (isLoggedIn) {
-      history.push("/HomeScreen");
-    }
+    // const { isLoggedIn, history } = this.props;
+    // if (isLoggedIn) {
+    //   history.push("/HomeScreen");
+    // }
   }
+  
   handleSubmit = val => {
-    this.props.login(val);
-  };
+    console.log("Submitting...")
+    const { login, history } = this.props;
+    login(val, history);
+  }
+  
   render() {
     const { classes } = this.props;
     return (
@@ -35,7 +40,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    login: data => dispatch(AuthActions.loginRequest(data))
+    login: (data, history) => dispatch(AuthActions.loginRequest(data, history))
   };
 };
 

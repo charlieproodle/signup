@@ -1,13 +1,24 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { AuthSelectors } from "../Redux/AuthRedux";
-import { withStyles} from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 import styles from "./styles/HomeScreenStyle";
 import { compose } from "redux";
 
 class HomeScreen extends Component {
+  state = {
+    username: ""
+  };
+  componentDidUpdate() {
+    if (this.props.user) {
+      this.setState({
+        username: this.props.user.username
+      });
+    }
+  }
   render() {
-    const { username, classes } = this.props;
+    const { classes } = this.props;
+    const { username } = this.state;
     return (
       <div className={classes.container}>
         <h2>Hi {username}, this is the HomeScreen</h2>
@@ -18,7 +29,7 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => {
   return {
-    username: AuthSelectors.getUsername(state)
+    user: AuthSelectors.getUser(state)
   };
 };
 

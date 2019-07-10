@@ -8,11 +8,11 @@ class Navbar extends Component {
   logout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    this.props.history.push("/HomeScreen");
+    window.location = 'http://localhost:3000/'
   };
   render() {
     const { classes } = this.props;
-    return (
+    return ( 
       <div className={classes.container}>
         <h1 className={classes.title}>SIMPLE LOGIN</h1>
         <button onClick={this.logout} className={classes.logout}>

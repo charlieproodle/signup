@@ -10,7 +10,8 @@ import { AuthTypes } from "../Redux/AuthRedux";
 
 import {
   loginSaga,
-  signupSaga
+  signupSaga,
+  authSaga
 } from "./Workers";
 
 
@@ -25,4 +26,5 @@ const api = API.create();
 export default function* root() {
   yield all([takeLatest(AuthTypes.LOGIN_REQUEST, loginSaga, api)]);
   yield all([takeLatest(AuthTypes.SIGNUP_REQUEST, signupSaga, api)]);
+  yield all([takeLatest(AuthTypes.AUTH_CHECK_REQUEST, authSaga, api)]);
 }

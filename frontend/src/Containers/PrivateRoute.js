@@ -4,12 +4,11 @@ import { Route, Redirect } from "react-router-dom";
 class PrivateRoute extends Component {
   render() {
     const { component: Component, accessToken, ...rest } = this.props;
-    console.log(accessToken)
     return (
       <Route
         {...rest}
         render={props =>
-          accessToken ? (
+          localStorage.getItem("access") ? (
             <Component {...props} />
           ) : (
             <Redirect to="/" />
