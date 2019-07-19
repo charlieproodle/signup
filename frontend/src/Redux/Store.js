@@ -4,15 +4,13 @@ import createSagaMiddleware from "redux-saga";
 import root from "../Sagas/Watchers";
 import { combineReducers } from "redux";
 import { reducer as formReducer } from "redux-form";
-// import { connectRouter, routerMiddleware } from 'connected-react-router'
-// import { createBrowserHistory } from 'history'
+import { resettableReducer } from 'reduxsauce'
 
-// export const history = createBrowserHistory()
+const resettable = resettableReducer('LOGOUT')
 
 const reducers = combineReducers({
-  // router: connectRouter(history),
-  auth: require("./AuthRedux").reducer,
-  form: formReducer
+  auth: resettable(require("./AuthRedux").reducer),
+  form: resettable(formReducer)
 });
 
 export default function configureStore() {

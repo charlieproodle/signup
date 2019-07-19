@@ -7,16 +7,8 @@ import { withStyles } from "@material-ui/styles";
 import styles from "./styles/LoginScreenStyle";
 
 class LoginScreen extends Component {
-
-  componentDidUpdate() {
-    // const { isLoggedIn, history } = this.props;
-    // if (isLoggedIn) {
-    //   history.push("/HomeScreen");
-    // }
-  }
   
   handleSubmit = val => {
-    console.log("Submitting...")
     const { login, history } = this.props;
     login(val, history);
   }

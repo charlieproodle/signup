@@ -9,14 +9,14 @@ import { Provider } from "react-redux";
 
 // import { ConnectedRouter } from "connected-react-router";
 import { BrowserRouter as Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history'
+// import { createBrowserHistory } from 'history'
 
-const history = createBrowserHistory();
+// const history = createBrowserHistory();
 const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router history={history}>
+    <Router>
       <App />
     </Router>
   </Provider>,

@@ -6,22 +6,12 @@ import styles from "./styles/HomeScreenStyle";
 import { compose } from "redux";
 
 class HomeScreen extends Component {
-  state = {
-    username: ""
-  };
-  componentDidUpdate() {
-    if (this.props.user) {
-      this.setState({
-        username: this.props.user.username
-      });
-    }
-  }
   render() {
-    const { classes } = this.props;
-    const { username } = this.state;
+    const { classes, user } = this.props;
+    console.log(user);
     return (
       <div className={classes.container}>
-        <h2>Hi {username}, this is the HomeScreen</h2>
+        <h2>Hi {"Charlie"}, this is the HomeScreen</h2>
       </div>
     );
   }
@@ -29,7 +19,7 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: AuthSelectors.getUser(state)
+    user: AuthSelectors.getUser(state),
   };
 };
 

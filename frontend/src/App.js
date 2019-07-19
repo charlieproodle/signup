@@ -13,35 +13,41 @@ import PrivateRoute from "./Containers/PrivateRoute";
 import AuthActions from "./Redux/AuthRedux";
 
 import { withRouter } from "react-router";
+import LoadingScreen from "./Containers/LoadingScreen";
 
 class App extends Component {
   state = {
-    accessToken: null
+    accessToken: null,
   };
 
   componentDidMount() {
-    if(localStorage.getItem("access")){
+    if (localStorage.getItem("access")) {
       this.setState({
-        accessToken: localStorage.getItem("access")
+        accessToken: localStorage.getItem("access"),
       });
     }
 
-    const { location: { pathname }, authCheck, history } = this.props;
+    const {
+      location: { pathname },
+      authCheck,
+      history,
+    } = this.props;
 
-    if(pathname !== '/' && pathname !== '/Register'){
-      authCheck(this.state.accessToken, history, pathname)
+    if (pathname !== "/" && pathname !== "/Register") {
+      const token = localStorage.getItem("access");
+      authCheck({ token, history, pathname });
     }
-
-
   }
+
   render() {
     const { accessToken } = this.state;
     return (
       <div>
-        <Navbar />
+        <Route path="/" component={Navbar} />
         <Switch>
-          <Route exact path="/" component={LoginScreen}/>
+          <Route exact path="/" component={LoginScreen} />
           <Route path="/Register" component={RegisterScreen} />
+          <Route path="/Loading" component={LoadingScreen} />
           <PrivateRoute
             path="/HomeScreen"
             component={HomeScreen}
@@ -60,9 +66,9 @@ const mapStateToProps = state => {
 
 const mapActionsToProps = dispatch => {
   return {
-    authCheck: (data, history, pathname) => dispatch(AuthActions.authCheckRequest(data, history, pathname))
-  }
-}
+    authCheck: data => dispatch(AuthActions.authCheckRequest(data)),
+  };
+};
 
 export default withRouter(
   connect(

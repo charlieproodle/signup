@@ -6,12 +6,18 @@ export function* loginSaga(api, action) {
   const { data, history } = action;
   const response = yield call(api.loginApi, data);
   if (response.ok) {
+
     if (response.data.tokens) {
       localStorage.setItem("access", response.data.tokens.access);
       localStorage.setItem("refresh", response.data.tokens.refresh);
     }
-    history.push("/HomeScreen");
+
+    history.push({
+      pathname: "/Loading",
+      state: { token: response.data.tokens.access}
+    });
     yield put(AuthActions.loginSuccess(response.data));
+
   } else {
     yield put(AuthActions.loginFailure(response.data));
   }
@@ -30,11 +36,12 @@ export function* signupSaga(api, action){
 }
 
 export function* authSaga(api, action){
-  const { history, pathname, data } = action;
-  const response = yield call(api.authApi, data)
+  const { history, pathname, token } = action.data;
+  const response = yield call(api.authApi, token)
   if(response.ok){
-    localStorage.setItem("access", data.tokens.access);
-    localStorage.setItem("refresh", data.tokens.refresh);
+    console.log("Response", response.data)
+    localStorage.setItem("access", response.data.tokens.access);
+    localStorage.setItem("refresh", response.data.tokens.refresh);
     history.push(pathname)
     yield put(AuthActions.authCheckSuccess(response.data));
   } else {

@@ -4,13 +4,14 @@ import Immutable from "seamless-immutable";
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
+  logout: null,
   loginRequest: ["data", "history"],
   loginSuccess: ["payload"],
   loginFailure: ["error"],
   signupRequest: ["data"],
   signupSuccess: ["payload"],
   signupFailure: ["error"],
-  authCheckRequest: [null],
+  authCheckRequest: ["data"],
   authCheckSuccess: ["payload"],
   authCheckFailure: ["failure"]
 });
@@ -27,21 +28,35 @@ export const INITIAL_STATE = Immutable({
   username: null,
   fetching: false,
   error: null,
-  isLoggedIn: false
+  isLoggedIn: false,
 });
+
+/* ------------- Selectors ------------- */
+
+export const AuthSelectors = {
+  getAccessToken: state => state.auth.accessToken,
+  getRefreshToken: state => state.auth.refreshToken,
+  getAuthError: state => state.auth.error,
+  getUser: state => state.auth.user,
+  isLoggedIn: state => state.auth.isLoggedIn,
+};
 
 /* ------------- Reducers ------------- */
 
+export const logout = state => 
+  state.merge({ fetching: true });
+
+
 export const loginRequest = state => state.merge({ fetching: true });
 
-export const loginSuccess = (state, action) =>
+export const loginSuccess = (state, {payload}) =>
   state.merge({
     fetching: false,
     error: null,
-    accessToken: action.payload.tokens.access,
-    refreshToken: action.payload.tokens.refresh,
-    userId: action.payload.user_details.id,
-    username: action.payload.user_details.username,
+    accessToken: payload.tokens.access,
+    refreshToken: payload.tokens.refresh,
+    userId: payload.user_details.id,
+    username: payload.user_details.username,
     isLoggedIn: true
   });
 
@@ -63,19 +78,20 @@ export const signupSuccess = (state, action) =>
 export const signupFailure = (state, action) =>
   state.merge({ fetching: false, error: action.error, isLoggedIn: false });
 
-export const authCheckRequest = (state, action) =>
-  state.merge({ fetching: true });
+export const authCheckRequest = (state, action) => {
+  return state.merge({ fetching: true });
+}
 
 export const authCheckSuccess = (state, { payload }) => {
-  console.log(payload);
   const {
-    auth: { tokens, user }
+    tokens, user 
   } = payload;
   return state.merge({
     fetching: false,
     error: null,
     user: user,
-    tokens: tokens
+    tokens: tokens,
+    isLoggedIn: true
   });
 };
 
@@ -85,6 +101,7 @@ export const authCheckFailure = (state, action) =>
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
+  [Types.LOGOUT]: logout,
   [Types.LOGIN_REQUEST]: loginRequest,
   [Types.LOGIN_SUCCESS]: loginSuccess,
   [Types.LOGIN_FAILURE]: loginFailure,
@@ -95,13 +112,3 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.AUTH_CHECK_SUCCESS]: authCheckSuccess,
   [Types.AUTH_CHECK_FAILURE]: authCheckFailure
 });
-
-/* ------------- Selectors ------------- */
-
-export const AuthSelectors = {
-  getAccessToken: state => state.auth.accessToken,
-  getRefreshToken: state => state.auth.refreshToken,
-  getAuthError: state => state.auth.error,
-  getUser: state => state.auth.user,
-  isLoggedIn: state => state.auth.isLoggedIn
-};

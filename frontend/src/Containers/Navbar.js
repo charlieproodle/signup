@@ -3,32 +3,41 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core";
 import styles from "./styles/NavbarStyle";
+import AuthActions, { AuthSelectors } from "../Redux/AuthRedux";
 
 class Navbar extends Component {
-  logout = () => {
+  _logout = () => {
+    const { logout, history } = this.props;
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    window.location = 'http://localhost:3000/'
+    logout();
+    history.push("/")
   };
   render() {
-    const { classes } = this.props;
-    return ( 
+    const { classes, loggedIn } = this.props;
+    return (
       <div className={classes.container}>
         <h1 className={classes.title}>SIMPLE LOGIN</h1>
-        <button onClick={this.logout} className={classes.logout}>
-          Logout
-        </button>
+        {loggedIn ? (
+          <button onClick={this._logout} className={classes.logout}>
+            Logout
+          </button>
+        ) : null}
       </div>
     );
   }
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    loggedIn: AuthSelectors.isLoggedIn(state),
+  };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    logout: () => dispatch(AuthActions.logout())
+  };
 };
 
 const withRedux = connect(
