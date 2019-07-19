@@ -6,14 +6,15 @@ import { Spin } from "antd";
 
 class LoadingScreen extends Component {
   componentDidUpdate(prevProps) {
-    const {
-      token,
-      location: { state },
-      history,
-    } = this.props;
-    if (prevProps.token !== token && token === state.token) {
-      history.push("/HomeScreen");
-    }
+    // console.log(this.props);
+    // const {
+    //   token,
+    //   location,
+    //   history,
+    // } = this.props;
+    // if (prevProps.token !== token && token === location.state.token) {
+    //   history.push("/HomeScreen");
+    // }
   }
 
   render() {

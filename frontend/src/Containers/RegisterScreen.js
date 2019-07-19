@@ -13,8 +13,8 @@ class RegisterScreen extends Component {
     }
   }
   handleSubmit = values => {
-    const { signup } = this.props;
-    signup(values);
+    const { signup, history } = this.props;
+    signup(values, history);
   };
 
   render() {
@@ -36,7 +36,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    signup: data => dispatch(AuthActions.signupRequest(data))
+    signup: (data, history) => dispatch(AuthActions.signupRequest(data, history))
   };
 };
 

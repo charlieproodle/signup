@@ -4,21 +4,26 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+import { PersistGate } from "redux-persist/integration/react";
+
 import configureStore from "./Redux/Store";
 import { Provider } from "react-redux";
 
-// import { ConnectedRouter } from "connected-react-router";
-import { BrowserRouter as Router } from 'react-router-dom';
-// import { createBrowserHistory } from 'history'
+import { BrowserRouter as Router } from "react-router-dom";
+
+import LoadingScreen from "./Containers/LoadingScreen";
 
 // const history = createBrowserHistory();
-const store = configureStore();
+const { store, persistor } = configureStore();
+// const store = configureStore()
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
-      <App />
-    </Router>
+    <PersistGate loading={<LoadingScreen/>} persistor={persistor}>
+      <Router>
+        <App />
+      </Router>
+    </PersistGate>
   </Provider>,
   document.getElementById("root")
 );

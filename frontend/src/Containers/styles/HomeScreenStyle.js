@@ -3,8 +3,10 @@ const styles = {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100%"
+        height: "100%",
+        padding: "20px"
     }
+
 }
 
 export default styles;

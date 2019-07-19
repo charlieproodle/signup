@@ -8,12 +8,13 @@ const { Types, Creators } = createActions({
   loginRequest: ["data", "history"],
   loginSuccess: ["payload"],
   loginFailure: ["error"],
-  signupRequest: ["data"],
+  signupRequest: ["data", "history"],
   signupSuccess: ["payload"],
   signupFailure: ["error"],
   authCheckRequest: ["data"],
   authCheckSuccess: ["payload"],
-  authCheckFailure: ["failure"]
+  authCheckFailure: ["failure"],
+  changeName: ["data"],
 });
 
 export const AuthTypes = Types;
@@ -38,18 +39,22 @@ export const AuthSelectors = {
   getRefreshToken: state => state.auth.refreshToken,
   getAuthError: state => state.auth.error,
   getUser: state => state.auth.user,
+  getUsername: state => state.auth.username,
   isLoggedIn: state => state.auth.isLoggedIn,
+  getName: state => state.auth.name,
 };
 
 /* ------------- Reducers ------------- */
 
-export const logout = state => 
-  state.merge({ fetching: true });
+export const changeName = (state, { data }) => {
+  return state.merge({ name: data });
+};
 
+export const logout = state => state.merge({ fetching: true });
 
 export const loginRequest = state => state.merge({ fetching: true });
 
-export const loginSuccess = (state, {payload}) =>
+export const loginSuccess = (state, { payload }) =>
   state.merge({
     fetching: false,
     error: null,
@@ -57,7 +62,7 @@ export const loginSuccess = (state, {payload}) =>
     refreshToken: payload.tokens.refresh,
     userId: payload.user_details.id,
     username: payload.user_details.username,
-    isLoggedIn: true
+    isLoggedIn: true,
   });
 
 export const loginFailure = (state, action) =>
@@ -65,14 +70,15 @@ export const loginFailure = (state, action) =>
 
 export const signupRequest = state => state.merge({ fetching: true });
 
-export const signupSuccess = (state, action) =>
+export const signupSuccess = (state, { payload }) =>
   state.merge({
     fetching: false,
     error: null,
-    accessToken: action.payload.tokens.access,
-    refreshToken: action.payload.tokens.refresh,
-    user: action.payload.user_details,
-    isLoggedIn: true
+    accessToken: payload.tokens.access,
+    refreshToken: payload.tokens.refresh,
+    userId: payload.user_details.id,
+    username: payload.user_details.username,
+    isLoggedIn: true,
   });
 
 export const signupFailure = (state, action) =>
@@ -80,18 +86,16 @@ export const signupFailure = (state, action) =>
 
 export const authCheckRequest = (state, action) => {
   return state.merge({ fetching: true });
-}
+};
 
 export const authCheckSuccess = (state, { payload }) => {
-  const {
-    tokens, user 
-  } = payload;
+  const { tokens, user } = payload;
   return state.merge({
     fetching: false,
     error: null,
     user: user,
     tokens: tokens,
-    isLoggedIn: true
+    isLoggedIn: true,
   });
 };
 
@@ -101,6 +105,7 @@ export const authCheckFailure = (state, action) =>
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
+  [Types.CHANGE_NAME]: changeName,
   [Types.LOGOUT]: logout,
   [Types.LOGIN_REQUEST]: loginRequest,
   [Types.LOGIN_SUCCESS]: loginSuccess,
@@ -110,5 +115,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SIGNUP_FAILURE]: signupFailure,
   [Types.AUTH_CHECK_REQUEST]: authCheckRequest,
   [Types.AUTH_CHECK_SUCCESS]: authCheckSuccess,
-  [Types.AUTH_CHECK_FAILURE]: authCheckFailure
+  [Types.AUTH_CHECK_FAILURE]: authCheckFailure,
 });

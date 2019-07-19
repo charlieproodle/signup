@@ -1,30 +1,42 @@
-import { createStore, applyMiddleware, compose } from "redux";
+import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import thunkMiddleware from "redux-thunk";
 import createSagaMiddleware from "redux-saga";
 import root from "../Sagas/Watchers";
-import { combineReducers } from "redux";
 import { reducer as formReducer } from "redux-form";
-import { resettableReducer } from 'reduxsauce'
+import { resettableReducer } from "reduxsauce";
 
-const resettable = resettableReducer('LOGOUT')
+// Redux Persist
+import storage from "redux-persist/lib/storage";
+import { persistStore, persistReducer } from "redux-persist";
+import ImmutablePersistenceTransform from "../Services/ImmutablePersistenceTransform";
 
-const reducers = combineReducers({
+const persistConfig = {
+  key: "root",
+  storage,
+  whitelist: ["auth"],
+  transforms: [ImmutablePersistenceTransform],
+};
+
+const resettable = resettableReducer("LOGOUT");
+
+const rootReducer = combineReducers({
   auth: resettable(require("./AuthRedux").reducer),
-  form: resettable(formReducer)
+  form: resettable(formReducer),
 });
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default function configureStore() {
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const sagaMiddleware = createSagaMiddleware();
   const store = createStore(
-    reducers,
-    composeEnhancers(
-      applyMiddleware(
-        // routerMiddleware(history),
-        thunkMiddleware, 
-        sagaMiddleware))
+    // rootReducer,
+    persistedReducer,
+    composeEnhancers(applyMiddleware(thunkMiddleware, sagaMiddleware))
   );
+  let persistor = persistStore(store);
   sagaMiddleware.run(root);
-  return store;
+  return { store, persistor };
+  // return store
 }

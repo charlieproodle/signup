@@ -7,11 +7,10 @@ import { compose } from "redux";
 
 class HomeScreen extends Component {
   render() {
-    const { classes, user } = this.props;
-    console.log(user);
+    const { classes, username } = this.props;
     return (
       <div className={classes.container}>
-        <h2>Hi {"Charlie"}, this is the HomeScreen</h2>
+        <h2>Hi {username}, this is the HomeScreen</h2>
       </div>
     );
   }
@@ -19,7 +18,7 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: AuthSelectors.getUser(state),
+    username: AuthSelectors.getUsername(state)
   };
 };
 
