@@ -2,7 +2,7 @@ import { call, put } from "redux-saga/effects";
 import AuthActions from "../Redux/AuthRedux";
 
 // --- Saga to log the user in --- //
-export function* loginSaga(api, { data, history }) {
+export function* loginSaga(api, { data, history, onError }) {
   const response = yield call(api.loginApi, data);
   if (response.ok) {
     if (response.data.tokens) {
@@ -16,11 +16,12 @@ export function* loginSaga(api, { data, history }) {
     });
   } else {
     yield put(AuthActions.loginFailure(response.data));
+    yield call(onError, response.data);
   }
 }
 
 // --- Saga the sign the user up --- //
-export function* signupSaga(api, { data, history }) {
+export function* signupSaga(api, { data, history, onError }) {
   const response = yield call(api.signupApi, data);
   if (response.ok) {
     localStorage.setItem("access", response.data.tokens.access);
@@ -32,6 +33,7 @@ export function* signupSaga(api, { data, history }) {
     });
   } else {
     yield put(AuthActions.signupFailure(response.data));
+    yield call(onError, response.data);
   }
 }
 

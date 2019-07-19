@@ -1,4 +1,3 @@
-// import R from "ramda";
 import * as R from 'ramda';
 import Immutable from "seamless-immutable";
 

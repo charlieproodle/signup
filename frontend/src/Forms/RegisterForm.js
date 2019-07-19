@@ -21,7 +21,7 @@ const validate = values => {
 
 class RegisterForm extends Component {
   render() {
-    const { handleSubmit, classes } = this.props;
+    const { handleSubmit, classes, submitError } = this.props;
     return (
       <form className={classes.formContainer} onSubmit={handleSubmit}>
         <Field
@@ -45,6 +45,11 @@ class RegisterForm extends Component {
           label={"Confirm Password"}
           placeholder={"Confirm Password"}
         />
+        {submitError && (
+          <div>
+            <p className={classes.error}>{submitError}</p>
+          </div>
+        )}
         <div className={classes.buttonContainer}>
           <button className={classes.button}>Sign Up</button>
         </div>
@@ -58,7 +63,7 @@ class RegisterForm extends Component {
 
 RegisterForm = reduxForm({
   form: "register",
-  validate
+  validate,
 })(RegisterForm);
 
 export default withStyles(styles)(RegisterForm);

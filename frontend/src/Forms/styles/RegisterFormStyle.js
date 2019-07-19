@@ -1,4 +1,7 @@
 const style = {
+  error:{
+    color: "red"
+  },
   formContainer: {
     width: "30%",
     margin: "auto",

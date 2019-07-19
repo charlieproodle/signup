@@ -18,7 +18,7 @@ const validate = values => {
 
 class LoginForm extends Component {
   render() {
-    const { handleSubmit, classes } = this.props;
+    const { handleSubmit, classes, submitError } = this.props;
     return (
       <form
         className={classes.formContainer}
@@ -39,6 +39,7 @@ class LoginForm extends Component {
           label={"Password"}
           placeholder={"Password"}
         />
+        {submitError && <div className={classes.error}><p>{submitError}</p></div>}
         <div className={classes.buttonContainer}>
           <button className={classes.button}>Log In</button>
         </div>

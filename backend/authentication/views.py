@@ -36,8 +36,6 @@ class LoginView(views.APIView):
 			username = request.data['username'], 
 			password = request.data['password']
 			)
-		print(request.data)
-		print(user)
 		# If the user exists send back details
 		if user is not None:
 			serializer = UserSerializer(user)
@@ -48,7 +46,7 @@ class LoginView(views.APIView):
 			return Response(return_data, status = status.HTTP_200_OK)
 		# Otherwise send back login failure
 		else:
-			return Response({ "detail" : "Login Failure" }, status = status.HTTP_401_UNAUTHORIZED)
+			return Response({ "detail" : "Username or password invalid" }, status = status.HTTP_401_UNAUTHORIZED)
 
 class RegisterView(views.APIView):
 
