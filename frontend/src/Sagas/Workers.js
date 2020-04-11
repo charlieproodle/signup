@@ -2,7 +2,7 @@ import { call, put } from "redux-saga/effects";
 import AuthActions from "../Redux/AuthRedux";
 
 // --- Saga to log the user in --- //
-export function* loginSaga(api, { data, history, onError }) {
+export function* loginSaga(api, { data, resolve }) {
   const response = yield call(api.loginApi, data);
   if (response.ok) {
     if (response.data.tokens) {
@@ -10,13 +10,10 @@ export function* loginSaga(api, { data, history, onError }) {
       localStorage.setItem("refresh", response.data.tokens.refresh);
     }
     yield put(AuthActions.loginSuccess(response.data));
-    history.push({
-      pathname: "/HomeScreen",
-      state: { token: response.data.tokens.access },
-    });
+    yield call(resolve.onSuccess)
   } else {
     yield put(AuthActions.loginFailure(response.data));
-    yield call(onError, response.data);
+    yield call(resolve.onFailure, response.data);
   }
 }
 
@@ -41,7 +38,6 @@ export function* authSaga(api, action) {
   const { history, pathname, token } = action.data;
   const response = yield call(api.authApi, token);
   if (response.ok) {
-    console.log("Response", response.data);
     localStorage.setItem("access", response.data.tokens.access);
     localStorage.setItem("refresh", response.data.tokens.refresh);
     history.push(pathname);

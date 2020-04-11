@@ -14,11 +14,11 @@ class Navbar extends Component {
     history.push("/")
   };
   render() {
-    const { classes, loggedIn } = this.props;
+    const { classes, isAuthenticated } = this.props;
     return (
       <div className={classes.container}>
         <h1 className={classes.title}>SIMPLE LOGIN</h1>
-        {loggedIn ? (
+        {isAuthenticated ? (
           <button onClick={this._logout} className={classes.logout}>
             Logout
           </button>
@@ -30,7 +30,7 @@ class Navbar extends Component {
 
 const mapStateToProps = state => {
   return {
-    loggedIn: AuthSelectors.isLoggedIn(state),
+    isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 };
 

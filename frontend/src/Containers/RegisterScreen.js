@@ -12,7 +12,7 @@ class RegisterScreen extends Component {
   };
 
   componentDidUpdate() {
-    if (this.props.isLoggedIn) {
+    if (this.props.isAuthenticated) {
       this.props.history.push("/HomeScreen");
     }
   }
@@ -44,7 +44,7 @@ class RegisterScreen extends Component {
 
 const mapStateToProps = state => {
   return {
-    isLoggedIn: AuthSelectors.isLoggedIn(state),
+    isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 };
 

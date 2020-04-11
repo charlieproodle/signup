@@ -5,31 +5,50 @@ import { compose } from "redux";
 import LoginForm from "../Forms/LoginForm";
 import { withStyles } from "@material-ui/styles";
 import styles from "./styles/LoginScreenStyle";
+import navRoutes from "Navigation/NavRoutes";
 
 class LoginScreen extends Component {
   state = {
-    submitError: null,
+    fetching: false,
+    success: false,
+    error: null,
   };
 
-  _submitFailed = error => {
+  loginFailure = error => {
     this.setState({
-      submitError: error.detail,
+      fetching: false,
+      success: false,
+      error: error.detail,
     });
   };
 
+  loginSuccess = () => {
+    this.setState({
+      fetching: false,
+      success: true,
+      error: null,
+    });
+    console.log('Success')
+    this.props.history.push(navRoutes.homeScreen);
+  };
+
   handleSubmit = val => {
-    const { login, history } = this.props;
-    let onError = error => this._submitFailed(error);
-    login(val, history, onError);
+    this.setState({ fetching: true });
+    const { login } = this.props;
+    const resolve = {
+      onSuccess: () => this.loginSuccess(),
+      onFailure: e => this.loginFailure(e)
+    }
+    login(val, resolve)
   };
 
   render() {
     const { classes } = this.props;
-    const { submitError } = this.state;
+    const { fetching, error, success } = this.state;
     return (
       <div className={classes.container}>
         <h2 className={classes.title}>Login</h2>
-        <LoginForm onSubmit={this.handleSubmit} submitError={submitError} />
+        <LoginForm handleSubmit={this.handleSubmit} error={error} fetching={fetching} success={success}/>
       </div>
     );
   }
@@ -37,14 +56,14 @@ class LoginScreen extends Component {
 
 const mapStateToProps = state => {
   return {
-    isLoggedIn: AuthSelectors.isLoggedIn(state),
+    isAuthenticated: AuthSelectors.isAuthenticated(state),
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    login: (data, history, onError) =>
-      dispatch(AuthActions.loginRequest(data, history, onError)),
+    login: (data, resolve) =>
+      dispatch(AuthActions.loginRequest(data, resolve)),
   };
 };
 

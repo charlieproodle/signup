@@ -4,7 +4,6 @@ import AppConfig from "../Config/AppConfig";
 // ------------ Auxillary Functions ------------ //
 
 const authPrefix = "Bearer";
-// var accessToken = localStorage.getItem("access");
 
 const create = (baseURL = AppConfig.APIServer) => {
   const api = apisauce.create({

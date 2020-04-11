@@ -5,15 +5,19 @@ import Immutable from "seamless-immutable";
 
 const { Types, Creators } = createActions({
   logout: null,
-  loginRequest: ["data", "history", "onError"],
+
+  loginRequest: ["data", "resolve"],
   loginSuccess: ["payload"],
   loginFailure: ["error"],
+
   signupRequest: ["data", "history", "onError"],
   signupSuccess: ["payload"],
   signupFailure: ["error"],
+
   authCheckRequest: ["data"],
   authCheckSuccess: ["payload"],
   authCheckFailure: ["failure"],
+
   changeName: ["data"],
 });
 
@@ -29,7 +33,7 @@ export const INITIAL_STATE = Immutable({
   username: null,
   fetching: false,
   error: null,
-  isLoggedIn: false,
+  isAuthenticated: false,
 });
 
 /* ------------- Selectors ------------- */
@@ -40,7 +44,7 @@ export const AuthSelectors = {
   getAuthError: state => state.auth.error,
   getUser: state => state.auth.user,
   getUsername: state => state.auth.username,
-  isLoggedIn: state => state.auth.isLoggedIn,
+  isAuthenticated: state => state.auth.isAuthenticated,
   getName: state => state.auth.name,
 };
 
@@ -58,15 +62,13 @@ export const loginSuccess = (state, { payload }) =>
   state.merge({
     fetching: false,
     error: null,
-    accessToken: payload.tokens.access,
-    refreshToken: payload.tokens.refresh,
-    userId: payload.user_details.id,
-    username: payload.user_details.username,
-    isLoggedIn: true,
+    accessToken: payload.access,
+    refreshToken: payload.refresh,
+    isAuthenticated: true,
   });
 
 export const loginFailure = (state, action) =>
-  state.merge({ fetching: false, error: action.error, isLoggedIn: false });
+  state.merge({ fetching: false, error: action.error, isAuthenticated: false });
 
 export const signupRequest = state => state.merge({ fetching: true });
 
@@ -78,11 +80,11 @@ export const signupSuccess = (state, { payload }) =>
     refreshToken: payload.tokens.refresh,
     userId: payload.user_details.id,
     username: payload.user_details.username,
-    isLoggedIn: true,
+    isAuthenticated: true,
   });
 
 export const signupFailure = (state, action) =>
-  state.merge({ fetching: false, error: action.error, isLoggedIn: false });
+  state.merge({ fetching: false, error: action.error, isAuthenticated: false });
 
 export const authCheckRequest = (state, action) => {
   return state.merge({ fetching: true });
@@ -95,7 +97,7 @@ export const authCheckSuccess = (state, { payload }) => {
     error: null,
     user: user,
     tokens: tokens,
-    isLoggedIn: true,
+    isAuthenticated: true,
   });
 };
 
