@@ -1,42 +1,49 @@
+import SignupForm from "Forms/SignupForm";
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import styles from "./styles/RegisterScreenStyle";
-import { withStyles } from "@material-ui/core";
-import RegisterForm from "../Forms/RegisterForm";
-import AuthActions, { AuthSelectors } from "../Redux/AuthRedux";
+import AuthActions, { AuthSelectors } from "Redux/AuthRedux";
+import styles from "./styles.module.scss";
+import navRoutes from "Navigation/NavRoutes";
 
-class RegisterScreen extends Component {
+class SignupScreen extends Component {
   state = {
-    submitError: null,
+    fetching: false,
+    error: null,
+    success: false,
   };
 
-  componentDidUpdate() {
-    if (this.props.isAuthenticated) {
-      this.props.history.push("/HomeScreen");
-    }
-  }
-
-  _submitFailed = error => {
-    console.log("Submit failed", error);
+  signupFailure = error => {
     this.setState({
-      submitError: error.detail,
+      fetching: false,
+      success: false,
+      error: error,
     });
   };
 
+  signupSuccess = () => {
+    this.setState({
+      fetching: false,
+      success: true,
+      error: null,
+    });
+    this.props.history.push(navRoutes.homeScreen);
+  };
+
   handleSubmit = values => {
-    const { signup, history } = this.props;
-    let onError = error => this._submitFailed(error);
-    signup(values, history, onError);
+    const { signup } = this.props;
+    const resolve = {
+      onSuccess: () => this.signupSuccess(),
+      onFailure: e => this.signupFailure(e)
+    }
+    signup(values, resolve);
   };
 
   render() {
-    const { classes } = this.props;
-    const { submitError } = this.state;
+    const { fetching, error, success } = this.state;
     return (
-      <div className={classes.container}>
-        <h1 className={classes.title}>Register</h1>
-        <RegisterForm onSubmit={this.handleSubmit} submitError={submitError} />
+      <div className={styles.container}>
+        <h1 className={styles.title}>Signup</h1>
+        <SignupForm handleSubmit={this.handleSubmit} fetching={fetching} error={error} success={success} />
       </div>
     );
   }
@@ -50,17 +57,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    signup: (data, history, onError) =>
-      dispatch(AuthActions.signupRequest(data, history, onError)),
+    signup: (data, resolve) =>
+      dispatch(AuthActions.signupRequest(data, resolve)),
   };
 };
 
-const withRedux = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-);
+)(SignupScreen);
 
-export default compose(
-  withStyles(styles),
-  withRedux
-)(RegisterScreen);

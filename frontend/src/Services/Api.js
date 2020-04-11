@@ -16,17 +16,17 @@ const create = (baseURL = AppConfig.APIServer) => {
 
   // ------------ APIs ------------ //
 
-  const loginApi = data => {
+  const loginApi = ({ username, password }) => {
     return api.post("login/", {
-      username: data.username,
-      password: data.password
+      username,
+      password
     });
   }  
 
-  const signupApi = data => {
-    return api.post("register/", {
-      username: data.username,
-      password: data.password
+  const signupApi = ({ username, password}) => {
+    return api.post("signup/", {
+      username,
+      password
     })
   }
 

@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import AuthActions, { AuthSelectors } from "../Redux/AuthRedux";
+import AuthActions, { AuthSelectors } from "Redux/AuthRedux";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import LoginForm from "../Forms/LoginForm";
-import { withStyles } from "@material-ui/styles";
-import styles from "./styles/LoginScreenStyle";
+import LoginForm from "Forms/LoginForm";
 import navRoutes from "Navigation/NavRoutes";
+import styles from "./styles.module.scss";
 
 class LoginScreen extends Component {
   state = {
@@ -28,7 +26,6 @@ class LoginScreen extends Component {
       success: true,
       error: null,
     });
-    console.log('Success')
     this.props.history.push(navRoutes.homeScreen);
   };
 
@@ -43,11 +40,10 @@ class LoginScreen extends Component {
   };
 
   render() {
-    const { classes } = this.props;
     const { fetching, error, success } = this.state;
     return (
-      <div className={classes.container}>
-        <h2 className={classes.title}>Login</h2>
+      <div className={styles.container}>
+        <h2 className={styles.title}>Login</h2>
         <LoginForm handleSubmit={this.handleSubmit} error={error} fetching={fetching} success={success}/>
       </div>
     );
@@ -67,11 +63,8 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const withRedux = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-);
-export default compose(
-  withStyles(styles),
-  withRedux
 )(LoginScreen);
+

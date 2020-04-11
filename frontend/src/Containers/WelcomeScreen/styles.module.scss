@@ -1,0 +1,18 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttonContainer {
+    padding: 10;
+    display: flex;
+}
+
+.button {
+    padding: 20;
+    border-radius: 10;
+    border: solid 2px lightgray;
+    &:hover {
+        background-color: lightgray;
+    }
+}

@@ -1,7 +1,7 @@
 import EmptyScreen from "Containers/EmptyScreen";
 import LoginScreen from "Containers/LoginScreen";
 import Navbar from "Containers/Navbar";
-import RegisterScreen from "Containers/RegisterScreen";
+import SignupScreen from "Containers/SignupScreen";
 import navRoutes from "Navigation/NavRoutes";
 import React, { Component } from 'react';
 import { connect } from "react-redux";
@@ -9,7 +9,7 @@ import { withRouter } from "react-router";
 import { Route, Switch } from "react-router-dom";
 import AuthActions, { AuthSelectors } from "Redux/AuthRedux";
 import RestrictedRoutes from "./RestrictedRoutes";
-
+import WelcomeScreen from "Containers/WelcomeScreen";
 class MainRoute extends Component {
   state = {
     accessToken: null,
@@ -21,8 +21,9 @@ class MainRoute extends Component {
       <div>
         <Route path={navRoutes.root} component={Navbar} />
         <Switch>
-          <Route exact path={navRoutes.login} component={LoginScreen} />
-          <Route path={navRoutes.signup} component={RegisterScreen} />
+          <Route exact path={navRoutes.root} component={WelcomeScreen} />
+          <Route path={navRoutes.login} component={LoginScreen} />
+          <Route path={navRoutes.signup} component={SignupScreen} />
           <RestrictedRoutes isAuthenticated={isAuthenticated} />
           <Route render={() => <EmptyScreen error_msg={404} />} />
         </Switch>

@@ -69,7 +69,7 @@ class RegisterView(CreateAPIView):
             user = User.objects.get(username=serializer.data["username"])
             return Response(get_tokens_for_user(user), status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 class AuthView(views.APIView):
     def get(self, request):

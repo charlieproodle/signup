@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "Components/FormInput";
 import { Field, Form } from "react-final-form";
-import styles from "./styles.module.scss";
 import navRoutes from "Navigation/NavRoutes";
+import styles from "./styles.module.scss";
 import Button from "react-bootstrap/Button";
 
 const validate = values => {
@@ -14,22 +14,21 @@ const validate = values => {
   if (!values.password) {
     errors.password = "Required";
   }
+  if (values.confirm_password !== values.password) {
+    errors.confirm_password = "Passwords must match";
+  }
   return errors;
 };
 
-class LoginForm extends Component {
+class SignupForm extends Component {
   render() {
-    const { handleSubmit, error, fetching } = this.props;
+    const { handleSubmit, fetching, error } = this.props;
     return (
         <Form 
             validate={validate}
             onSubmit={handleSubmit}
-            render={({ handleSubmit }) => (
-                <form
-                className={styles.formContainer}
-                onSubmit={handleSubmit}
-                testval="Test"
-              >
+            render={({ handleSubmit}) => (
+              <form className={styles.formContainer} onSubmit={handleSubmit}>
                 <Field
                   name="username"
                   component={FormInput}
@@ -44,14 +43,29 @@ class LoginForm extends Component {
                   placeholder={"Password"}
                   render={props => <FormInput {...props} type={"password"}/>}
                 />
-                {error && <div className={styles.error}><p>{error}</p></div>}
+                <Field
+                  name="confirm_password"
+                  type={"password"}
+                  label={"Confirm Password"}
+                  placeholder={"Confirm Password"}
+                  render={props => <FormInput {...props} type={"password"}/>}
+                />
+                {error && (
+                  error.map(e => (
+                  <div>
+                    <p className={styles.error}>{e}</p>
+                  </div>
+                  ))
+                )}
                 <div className={styles.buttonContainer}>
-                  <Button type={"submit"}>
-                    {fetching ? "Loading..." : "Log In"}
+                  <Button type={"submit"} className={styles.button}>
+                    {
+                      fetching ? "Loading..." : "Sign Up"
+                    }
                   </Button>
                 </div>
-                <Link className={styles.linkContainer} to={navRoutes.signup}>
-                  Don't have an account?
+                <Link to={navRoutes.login} className={styles.linkContainer}>
+                  Already have an account?
                 </Link>
               </form>
             )}
@@ -60,4 +74,4 @@ class LoginForm extends Component {
   }
 }
 
-export default LoginForm;
+export default SignupForm;

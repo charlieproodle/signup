@@ -10,7 +10,7 @@ const { Types, Creators } = createActions({
   loginSuccess: ["payload"],
   loginFailure: ["error"],
 
-  signupRequest: ["data", "history", "onError"],
+  signupRequest: ["data", "resolve"],
   signupSuccess: ["payload"],
   signupFailure: ["error"],
 
@@ -29,11 +29,8 @@ export default Creators;
 export const INITIAL_STATE = Immutable({
   accessToken: null,
   refreshToken: null,
-  userId: null,
-  username: null,
-  fetching: false,
-  error: null,
   isAuthenticated: false,
+  user: {}
 });
 
 /* ------------- Selectors ------------- */
@@ -60,8 +57,6 @@ export const loginRequest = state => state.merge({ fetching: true });
 
 export const loginSuccess = (state, { payload }) =>
   state.merge({
-    fetching: false,
-    error: null,
     accessToken: payload.access,
     refreshToken: payload.refresh,
     isAuthenticated: true,
@@ -74,12 +69,8 @@ export const signupRequest = state => state.merge({ fetching: true });
 
 export const signupSuccess = (state, { payload }) =>
   state.merge({
-    fetching: false,
-    error: null,
-    accessToken: payload.tokens.access,
-    refreshToken: payload.tokens.refresh,
-    userId: payload.user_details.id,
-    username: payload.user_details.username,
+    accessToken: payload.access,
+    refreshToken: payload.refresh,
     isAuthenticated: true,
   });
 
@@ -93,8 +84,6 @@ export const authCheckRequest = (state, action) => {
 export const authCheckSuccess = (state, { payload }) => {
   const { tokens, user } = payload;
   return state.merge({
-    fetching: false,
-    error: null,
     user: user,
     tokens: tokens,
     isAuthenticated: true,

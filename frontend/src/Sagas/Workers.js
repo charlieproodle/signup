@@ -5,10 +5,6 @@ import AuthActions from "../Redux/AuthRedux";
 export function* loginSaga(api, { data, resolve }) {
   const response = yield call(api.loginApi, data);
   if (response.ok) {
-    if (response.data.tokens) {
-      localStorage.setItem("access", response.data.tokens.access);
-      localStorage.setItem("refresh", response.data.tokens.refresh);
-    }
     yield put(AuthActions.loginSuccess(response.data));
     yield call(resolve.onSuccess)
   } else {
@@ -18,19 +14,14 @@ export function* loginSaga(api, { data, resolve }) {
 }
 
 // --- Saga the sign the user up --- //
-export function* signupSaga(api, { data, history, onError }) {
+export function* signupSaga(api, { data, resolve }) {
   const response = yield call(api.signupApi, data);
   if (response.ok) {
-    localStorage.setItem("access", response.data.tokens.access);
-    localStorage.setItem("refresh", response.data.tokens.refresh);
     yield put(AuthActions.signupSuccess(response.data));
-    history.push({
-      pathname: "/HomeScreen",
-      state: { token: response.data.tokens.access },
-    });
+    yield call(resolve.onSuccess)
   } else {
     yield put(AuthActions.signupFailure(response.data));
-    yield call(onError, response.data);
+    yield call(resolve.onFailure, Object.values(response.data));
   }
 }
 
