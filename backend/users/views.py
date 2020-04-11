@@ -15,6 +15,8 @@ from django.db.models import Q
 from django.core.files.base import ContentFile
 from django.core.mail import send_mail
 
+from django.contrib.auth.models import User
+
 
 # --- Some auxillary functions --- #
 
@@ -55,27 +57,19 @@ class LoginView(views.APIView):
 
 
 class RegisterView(CreateAPIView):
-
-    # Allow any request
     permission_classes = (AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
     def post(self, request):
-        details = request.data
-        username = details["username"]
-        password = details["password"]
-        # Check if user exists
-        # if len(User.objects.filter(username = username)) == 0:
-        # 	# Create user if user doesn't exists
-        # 	user = User.objects.create(
-        # 		username = username,
-        # 		password = password
-        # 	)
-        # 	tokens = get_tokens_for_user(user)
-        # 	return Response(tokens, status = status.HTTP_201_CREATED)
-        # # If user does exist send back an error
-        # else:
-        # 	return Response({"detail": "User already exists"}, status = status.HTTP_401_UNAUTHORIZED)
-
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print(serializer.data["username"])
+            user = User.objects.get(username=serializer.data["username"])
+            return Response(get_tokens_for_user(user), status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors)
 
 class AuthView(views.APIView):
     def get(self, request):
@@ -84,4 +78,3 @@ class AuthView(views.APIView):
         tokens = get_tokens_for_user(user)
         authResponse = {"user": serializer.data, "tokens": tokens}
         return Response(authResponse, status=status.HTTP_200_OK)
-
