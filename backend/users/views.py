@@ -65,7 +65,6 @@ class RegisterView(CreateAPIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data["username"])
             user = User.objects.get(username=serializer.data["username"])
             return Response(get_tokens_for_user(user), status=status.HTTP_200_OK)
         else:
